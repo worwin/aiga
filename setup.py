@@ -34,5 +34,8 @@ setup(
     python_requires='>=3.9', 
     install_requires=['numpy',
                       'scipy',
-                      'matplotlib']
+                      'matplotlib'],
+    project_urls={
+        'Acknowledgements': 'https://openai.com/chatgpt',
+    }
 )
