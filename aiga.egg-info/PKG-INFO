@@ -1,0 +1,27 @@
+Metadata-Version: 2.1
+Name: aiga
+Version: 0.1
+Summary: Exploritary Module for Machine Learning
+Home-page: 
+Author: Joshua Windle
+Author-email: Joshua.W.Windle@gmail.com
+License: GPL-3.0
+Project-URL: Acknowledgements, https://openai.com/chatgpt
+Classifier: Development Status :: 1 - Planning
+Classifier: Intended Audience :: Developers
+Classifier: License :: OSI Approved :: GNU General Public License v3 (GPLv3)
+Classifier: Programming Language :: Python :: 3
+Classifier: Programming Language :: Python :: 3.8
+Classifier: Topic :: Scientific/Engineering :: Artificial Intelligence
+Requires-Python: >=3.9
+Description-Content-Type: text/markdown
+License-File: LICENSE
+Requires-Dist: numpy
+Requires-Dist: scipy
+Requires-Dist: matplotlib
+
+# aiga
+
+I'm writing a project from scratch to experiment with machine learning. I want to first program a feedforward network from scratch. I want this to be highly modularized and to be a library for those who want to learn about machine learning. Its focus isn't on efficiency or any of that. It's about understanding the underlying principles of the mathematics behind the models and how they are written. The language this is written in will be Python unless otherwise it is deemed necessary to deviate from this. 
+
+Project to code several machine learning and neural network models from scratch. 

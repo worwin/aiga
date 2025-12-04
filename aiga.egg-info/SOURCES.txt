@@ -1,0 +1,12 @@
+LICENSE
+README.md
+setup.py
+aiga/__init__.py
+aiga.egg-info/PKG-INFO
+aiga.egg-info/SOURCES.txt
+aiga.egg-info/dependency_links.txt
+aiga.egg-info/requires.txt
+aiga.egg-info/top_level.txt
+aiga/activations/__init__.py
+aiga/layers/__init__.py
+aiga/layers/dense.py

@@ -10,18 +10,8 @@ setup(
     author_email='Joshua.W.Windle@gmail.com',
     url="",
     license="GPL-3.0",
-    packages=find_packages(),
-    install_requires=[
-        'matplotlib',
-        'numpy',
-        'scipy'
-    ],
+    packages=find_packages(),                
     extras_require={
-    },
-    entry_points={
-        "console_scripts": [
-            "aiga=aiga.main:main_function"
-        ]
     },
     classifiers=[
         "Development Status :: 1 - Planning",
