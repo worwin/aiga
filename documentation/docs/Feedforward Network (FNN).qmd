@@ -1,0 +1,699 @@
+## 1 Feedforward Network (FNN)
+
+In a feedforward neural network, the input is propagated layer by layer through a sequence of linear transformations and nonlinear activation functions. The formulas below describe the feedforward computation using the notations of Higham & Higham and Zemke. Activation functions appear as part of these feedforward definitions.
+
+#### Higham & Higham (2018)
+
+Higham defines the input layer of the feedforward network as
+
+$$
+a^{[1]} = x.
+\tag{7}
+$$
+
+For layers $l = 2,\dots,L$, the feedforward update is
+
+$$
+a^{[l]}
+=
+\sigma\!\left(
+W^{[l]} a^{[l-1]} + b^{[l]}
+\right).
+\tag{8}
+$$
+
+For backpropagation, Higham separates the linear and nonlinear parts explicitly:
+
+$$
+a^{[l]} = \sigma\!\left(z^{[l]}\right),
+\qquad
+z^{[l]} = W^{[l]} a^{[l-1]} + b^{[l]}.
+\tag{19}
+$$
+
+He then restates the activation step in its simplest form:
+
+$$
+a^{[\ell]} = \sigma\!\left( z^{[\ell]} \right),
+\tag{20}
+$$
+
+where  
+- $z^{[\ell]}$ is the pre-activation (linear transformation),  
+- $a^{[\ell]}$ is the post-activation,  
+- $\sigma$ is applied componentwise.
+
+Together, (7), (8), (19), and (20) fully describe Higham’s feedforward network.
+
+---
+
+#### Zemke (TUHH)
+
+Zemke defines the feedforward network as
+
+$$
+\mathrm{a}_1 := x, \qquad
+z_i := W_i \mathrm{a}_i + b_i, \qquad
+\mathrm{a}_{i+1} := a_i(z_i), \quad i = 1,\dots,m-1,
+\tag{L02 S05) (1}
+$$
+
+where  
+- $z_i$ is the pre-activation of layer $i$,  
+- $a_i(\cdot)$ is the activation function at layer $i$,  
+- $\mathrm{a}$ is the vector of the activation function,  
+- the computation proceeds sequentially until $f(x) := \mathrm{a}_m$
+
+Because of the confusing nature between the characters $\mathrm{a}$ and $a$ while reading this, we will alter his notation to the following: 
+
+$$
+a_1 := x, \qquad
+z_i := W_i a_i + b_i, \qquad
+a_{i+1} := \sigma_i(z_i), \quad i = 1,\dots,m-1,
+\tag{L02 S05) (1}
+$$
+
+where  
+- $z_i$ is the pre-activation of layer $i$,  
+- $\sigma_i(\cdot)$ is the activation function at layer $i$,  
+- $a$ is the vector of the activation function,  
+- the computation proceeds sequentially until $f(x) := a_m$
+
+This mirrors Higham's notation, but uses subscripts instead of superscripts.
+
+---
+
+#### Comparison
+
+::: {style="font-size: 0.85em; overflow-x: auto;"}
+| **Concept** | **Higham** | **Zemke** |
+|-------------|------------|-----------|
+| Layer indexing | $\ell = 1,\dots,L$ | $i = 1,\dots,m-1$ |
+| Input layer | $a^{[1]} = x$ | $a_1 = x$ |
+| Preactivation | $z^{[\ell]} = W^{[\ell]} a^{[\ell-1]} + b^{[\ell]}$ | $z_i = W_i a_i + b_i$ |
+| Activation output | $a^{[\ell]} = \sigma(z^{[\ell]})$ | $a_{i+1} = a_i(z_i)$ |
+| Compact feedforward rule | $a^{[l]} = \sigma(W^{[l]} a^{[l-1]} + b^{[l]})$ | Same structure |
+| Final output | $a^{[L]}$ | $a_m = f(x)$ |
+| Componentwise | Yes | Yes |
+:::
+
+
+## 2 Cost Function
+
+#### Higham & Higham (2018)
+
+Higham defines the dataset cost function for the training set  
+$(x^{(i)},\, y(x^{(i)})),\ i = 1,\ldots,n$ as
+
+$$
+\text{Cost}
+=
+\frac{1}{n}
+\sum_{i=1}^{n}
+\frac{1}{2}
+\left\|
+y(x^{(i)}) - a^{[L]}(x^{(i)})
+\right\|_2^{2}.
+\tag{9}
+$$
+
+where  
+- $n$ is the sample size,  
+- $a^{[L]}(x^{(i)})$ is the output of the network for sample $x^{(i)}$,  
+- $y(x^{(i)})$ is the target vector,  
+- $\|\cdot\|_2$ is the Euclidean norm.
+
+---
+
+For the backpropagation derivation, Higham uses the single-example cost
+
+$$
+C = \frac{1}{2}\,\|\, y - a^{[L]} \,\|_2^{2}.
+\tag{18}
+$$
+
+---
+
+#### Zemke (TUHH)
+
+Zemke defines the full dataset cost as
+
+$$
+C(p)
+=
+\frac{1}{2N}
+\sum_{j=1}^{N}
+\left\|\, f(x_j) - y_j \,\right\|_2^2,
+\tag{L02 S14) (2}
+$$
+
+where  
+- $N$ is the sample size,  
+- $f(x_j)$ is the network output for sample $x_j$,  
+- $y_j$ is the target vector.
+
+---
+
+#### Zemke (TUHH)
+
+For backpropagation, Zemke simplifies to the per-sample cost
+
+$$
+C
+=
+\frac{1}{2}
+\,\left\|\, a_m - y \,\right\|_2^{2},
+\tag{L2 S33) (3}
+$$
+
+where  
+- $a_m$ is the output activation vector of the final layer,  
+- $y$ is the target vector.
+
+---
+
+### Comparison
+
+::: {style="font-size: 0.85em; overflow-x: auto;"}
+| **Concept** | **Higham** | **Zemke** |
+|-------------|------------|-----------|
+| Dataset cost | $\displaystyle \frac{1}{n}\sum_{i=1}^n \frac12 \|y(x^{(i)}) - a^{[L]}(x^{(i)})\|_2^2$ | $\displaystyle \frac{1}{2N}\sum_{j=1}^N \|f(x_j)-y_j\|_2^2$ |
+| Single-sample cost | $\displaystyle C = \frac12\|y - a^{[L]}\|_2^2$ | $\displaystyle C = \frac12\|a_m - y\|_2^2$ |
+| Output notation | $a^{[L]}$ | $a_m$ |
+| Target notation | $y(x^{(i)})$ or $y$ | $y_j$ or $y$ |
+| Treatment of outputs | Per-sample: $a^{[L]}(x^{(i)})$ | Whole vectors: $a_m$ |
+| Norm | $\|\cdot\|_2$ | $\|\cdot\|_2$ |
+:::
+
+## 3 Backpropagation
+
+Backpropagation computes the gradients of the cost function with respect to all
+weights and biases in the network. Both Higham & Higham and Zemke introduce an
+intermediate quantity, denoted by a lowercase delta, which measures how the cost
+changes with respect to the pre-activation variables in each layer.
+
+---
+
+### Higham & Higham (2018)
+
+We let the error term in layer $\ell$ be the vector
+
+$$
+\delta^{[\ell]}_j
+=
+\frac{\partial C}{\partial z^{[\ell]}_j},
+\qquad
+1 \le j \le n_\ell,
+\qquad
+2 \le \ell \le L,
+\tag{21}
+$$
+
+where  
+- $j$ is the neuron index within layer $\ell$,  
+- $n_\ell$ is the total number of neurons in layer $\ell$,  
+- $z^{[\ell]}$ is the pre-activation vector of layer $\ell$.
+
+---
+
+#### Lemma
+
+$$
+\begin{flalign}
+\delta^{[L]}
+&= \sigma'\!\left(z^{[L]}\right) \circ (a^{[L]} - y)
+&&\tag{22}
+\end{flalign}
+$$
+
+$$
+\begin{flalign}
+\delta^{[\ell]}
+&= \sigma'\!\left(z^{[\ell]}\right) \circ \left((W^{[\ell+1]})^T \delta^{[\ell+1]}\right)
+&&\text{for } 2 \le \ell \le L-1 \tag{23}
+\end{flalign}
+$$
+
+$$
+\begin{flalign}
+\frac{\partial C}{\partial b^{[\ell]}_j}
+&= \delta^{[\ell]}_j
+&&\text{for } 2 \le \ell \le L \tag{24}
+\end{flalign}
+$$
+
+$$
+\begin{flalign}
+\frac{\partial C}{\partial w^{[\ell]}_{jk}}
+&= \delta^{[\ell]}_j\, a^{[\ell-1]}_k
+&&\text{for } 2 \le \ell \le L \tag{25}
+\end{flalign}
+$$
+
+---
+
+### Zemke (TUHH Lecture Slides)
+
+Zemke uses the same lowercase delta symbol but indexes layers by subscripts. He defines, for layers $i = 1,\dots,m-1$, the error vector
+
+$$
+\delta_i
+=
+\frac{\partial C}{\partial z_i}
+=
+\begin{pmatrix}
+\frac{\partial C}{\partial z_{i,1}} \\
+\vdots \\
+\frac{\partial C}{\partial z_{i,n_i}}
+\end{pmatrix}
+=
+\nabla_{x_i} C
+\tag{L02 S33) (4}
+$$
+
+where  
+- $z_i$ is the pre-activation vector of layer $i$,  
+- $n_i$ is the number of neurons in layer $i$,  
+- $C = \tfrac12 \|a_m - y\|_2^2$ is the per-sample cost.
+
+---
+
+### Lemma
+
+$$
+\begin{flalign}
+\delta_{m-1}
+&= \sigma_{m-1}'(z_{m-1})\,\circ\, (a_m - y)
+&&\tag{L02 S33) (5}
+\end{flalign}
+$$
+
+$$
+\begin{flalign}
+\delta_i
+&= \sigma_i'(z_i) \circ (W_{i+1}^{T}\delta_{i+1})
+&&\text{for } i = m-1,\,m-2,\dots,1
+\tag{L02 S33) (6}
+\end{flalign}
+$$
+
+$$
+\begin{flalign}
+\frac{\partial C}{\partial b_i}
+&= \delta_i
+&&\tag{L02 S34) (7}
+\end{flalign}
+$$
+
+$$
+\begin{flalign}
+\frac{\partial C}{\partial W_i}
+&= \delta_i\, a_i^{T}
+&&\tag{L02 S34) (8}
+\end{flalign}
+$$
+
+
+
+### Comparison
+
+::: {style="font-size: 0.85em; overflow-x: auto;"}
+
+| Concept | Higham | Zemke |
+|---------|--------|--------|
+| Output-layer delta | $\delta^{[L]} = \sigma'(z^{[L]}) \circ (a^{[L]} - y)$ | $\delta_{m-1} = \sigma_{m-1}'(z_{m-1}) \circ (a_m - y)$ |
+| Hidden-layer recursion | $\delta^{[\ell]} = \sigma'(z^{[\ell]}) \circ\left((W^{[\ell+1]})^T \delta^{[\ell+1]}\right)$ | $\delta_i = \sigma_i'(z_i) \circ (W_{i+1}^{T}\delta_{i+1})$ |
+| Weight gradient | $\displaystyle \frac{\partial C}{\partial w^{[\ell]}_{jk}} = \delta^{[\ell]}_j\, a^{[\ell-1]}_k$ | $\displaystyle \frac{\partial C}{\partial W_i} = \delta_i a_i^{T}$ |
+| Bias gradient | $\displaystyle \frac{\partial C}{\partial b^{[\ell]}_j} = \delta^{[\ell]}_j$ | $\displaystyle \frac{\partial C}{\partial b_i} = \delta_i$ |
+| Indexing style | Superscripts $[\ell]$ | Subscripts $i$ |
+| Activation derivative notation | $\sigma'(z^{[\ell]})$ | $\sigma_i'(z_i)$ |
+
+:::
+
+## 4 Haghmam Backpropagation Proof
+
+We begin by proving (22). The relations (20) with $l = L$ shows that $z_j^{[L]}$ and $a_j^{[L]}$ are connected by $a^{[L]} = \sigma\left(z^{[L]}\right)$, and hence
+
+$$
+\frac{\partial a_j^{[L]}}{\partial z_j^{[L]}}
+= \sigma'(z_j^{[L]}).
+$$
+
+Also, from (18),
+
+$$
+\frac{\partial C}{\partial a_j^{[L]}}
+= \frac{\partial}{\partial a_j^{[L]}} \frac{1}{2} \sum_{k=1}^{n_L} (y_k - a_k^{[L]})^2
+= - (y_j - a_j^{[L]}).
+$$
+
+So, using the chain rule,
+
+$$
+\delta_j^{[L]}
+= \frac{\partial C}{\partial z_j^{[L]}}
+= \frac{\partial C}{\partial a_j^{[L]}}
+  \frac{\partial a_j^{[L]}}{\partial z_j^{[L]}}
+= (a_j^{[L]} - y_j)\,\sigma'(z_j^{[L]}),
+$$
+
+which is the componentwise form of (22).
+
+---
+
+To show (23), we use the chain rule to convert from
+$z_j^{[l]}$ to $\{z_k^{[l+1]}\}_{k=1}^{n_{l+1}}$.
+Applying the chain rule and using the definition (21) where $j$ indexes a neuron in layer $l$ and $k$ indexes a neuron in layer $l+1$. This tells us which neuron $k$ in the current layer depends on neuron $j$ from the previous layer. Note: in the feed forward process we think of layer $l$ as being the current layer and layer $l+1$ as the next layer in the process. However, since we are working backwards for backpropagation, we will call $l+1$ the current layer and $l$ the previous layer.  
+
+$$
+\delta_j^{[l]}
+= \frac{\partial C}{\partial z_j^{[l]}}
+= \sum_{k=1}^{n^{[l+1]}}
+  \frac{\partial C}{\partial z_k^{[l+1]}}
+  \frac{\partial z_k^{[l+1]}}{\partial z_j^{[l]}}
+= \sum_{k=1}^{n^{[l+1]}}
+  \delta_k^{[l+1]} \frac{\partial z_k^{[l+1]}}{\partial z_j^{[l]}}.
+  \tag{26}
+$$
+
+Before continuing, let us recall from (19) that the weighted input to neuron $k$ in the current layer, $z_k^{[l+1]}$, and the weighted input to neuron $j$ in the previous layer, $z_j^{[l]}$, are connected via this feedforward pass
+
+$$
+z_k^{[l+1]}
+= \sum_{s=1}^{n_l} w_{ks}^{[l+1]} \, \sigma\!\left(z_s^{[l]}\right)
+  + b_k^{[l+1]}.
+$$
+
+Hence when looking at the partial derivative we see,
+
+$$
+\frac{\partial z_k^{[l+1]}}{\partial z_j^{[l]}}
+= w_{kj}^{[l+1]} \, \sigma'\!\left(z_j^{[l]}\right).
+$$
+
+In (26) this gives
+
+$$
+\delta_j^{[l]}
+= \sum_{k=1}^{n^{[l+1]}}
+  \delta_k^{[l+1]} \frac{\partial z_k^{[l+1]}}{\partial z_j^{[l]}}
+= \sum_{k=1}^{n_{l+1}}
+  \delta_k^{[l+1]} \, w_{kj}^{[l+1]} \, \sigma'\!\left(z_j^{[l]}\right),
+$$
+
+which may be rearranged as
+
+$$
+\delta_j^{[l]}
+= \sigma'\!\left(z_j^{[l]}\right)
+  \left( \left(W^{[l+1]}\right)^T \delta^{[l+1]} \right)_j.
+$$
+This is the component wise form of (23).
+
+---
+
+To show (24), we note from (19) and (20) that $z_j^{[l]}$ is connected to $b_j^{[l]}$ by
+
+$$
+z_j^{[l]}
+= \left( W^{[l]} \, \sigma\!\left( z^{[l-1]} \right) \right)_j
+  + b_j^{[l]}.
+$$
+
+Since $z^{[l-1]}$ does not depend on $b_j^{[l]}$, we find that
+
+$$
+\frac{\partial z_j^{[l]}}{\partial b_j^{[l]}} = 1.
+$$
+
+Then, from the chain rule,
+
+$$
+\frac{\partial C}{\partial b_j^{[l]}}
+= \frac{\partial C}{\partial z_j^{[l]}}
+  \frac{\partial z_j^{[l]}}{\partial b_j^{[l]}}
+= \frac{\partial C}{\partial z_j^{[l]}}
+= \delta_j^{[l]},
+$$
+
+using the definition (21).  This is the component wise form of (24).
+
+---
+
+Finally, to obtain (25) we start with the componentwise version of (19),
+
+$$
+z_j^{[l]}
+= \sum_{k=1}^{n_{l-1}}
+  w_{jk}^{[l]} \, a_k^{[l-1]}
+  + b_j^{[l]}.
+$$
+
+where $j$ indexes a neuron in the current layer $l$ and $k$ indexes a neuron in the previous layer $l-1$.  
+
+This gives
+
+$$
+\frac{\partial z_j^{[l]}}{\partial w_{jk}^{[l]}}
+= a_k^{[l-1]},
+\qquad\text{independently of } j,
+\tag{27}
+$$
+
+and
+
+$$
+\frac{\partial z_s^{[l]}}{\partial w_{jk}^{[l]}}
+= 0, \qquad \text{for } s \ne j.
+\tag{28}
+$$
+
+In words, (27) and (28) follow because the $j$th neuron at layer $l$ uses the weights from only the $j$th row of $W^{[l]}$, and applies these weights linearly. Here $s$ is a dummy summation index used to run through all neurons $n$ in layer $l$. Then, from the chain rule, (27) and (28) give
+
+$$
+\frac{\partial C}{\partial w_{jk}^{[l]}}
+= \sum_{s=1}^{n_l}
+  \frac{\partial C}{\partial z_s^{[l]}}
+  \frac{\partial z_s^{[l]}}{\partial w_{jk}^{[l]}}
+= \frac{\partial C}{\partial z_j^{[l]}}
+  \frac{\partial z_j^{[l]}}{\partial w_{jk}^{[l]}}
+= \delta_j^{[l]} \, a_k^{[l-1]},
+$$
+
+where the last step used the definition of $\delta_j^{[l]}$ in (21).  
+This completes the proof.
+
+:::
+
+## 5 Zemke Backpropagation Proof
+
+We begin by proving (5).  Relation (1) shows that $z_{m-1}$ and $a_m$ are connected by $a_m = \sigma_{m-1}(z_{m-1})$ and hence
+
+$$
+\frac{\partial a_m}{\partial z_{m-1}}
+=
+\sigma_{m-1}'(z_{m-1})
+$$
+
+Also, the derivative of the partial cost function with respect to $a_m$, interpreted
+as a column vector (i.e., the gradient), is given by
+
+$$
+\frac{\partial C}{\partial a_m}
+=
+\frac{1}{2}
+\frac{\partial \langle a_m - y,\; a_m - y \rangle}{\partial a_m}
+=
+\frac{1}{2}
+\frac{\partial \left(a_m^{\top} a_m - 2y^{\top} a_m + y^{\top} y\right)}{\partial a_m}
+=
+a_m - y
+=
+\nabla_{a_m} C.
+$$
+
+By definition, the error vector in the final hidden layer is
+
+$$
+\delta_{m-1}
+=
+\frac{\partial C}{\partial z_{m-1}}.
+$$
+
+Using the chain rule and the fact that $a_m = \sigma_{m-1}(z_{m-1})$, we obtain
+
+$$
+\delta_{m-1}
+=
+\frac{\partial a_m}{\partial z_{m-1}}
+\,
+\frac{\partial C}{\partial a_m}.
+$$
+
+Substituting the two derivatives computed above,
+
+$$
+\frac{\partial a_m}{\partial z_{m-1}}
+= \sigma_{m-1}'(z_{m-1}),
+\qquad
+\frac{\partial C}{\partial a_m}
+= a_m - y,
+$$
+
+we arrive at
+
+$$
+\delta_{m-1}
+=
+\sigma_{m-1}'(z_{m-1}) \circ (a_m - y).
+$$
+
+To understand the transposition due to the chain rule of the Jacobian Matrix, lets first review what is happening. For $i = 1,\dots,m-1$, since $a_{i+1} = \sigma_i(z_i)$ and $z_i \in \mathbb{R}^{n_{i+1}}$, the
+Jacobian of the activation with respect to the pre-activation is
+
+$$
+\frac{\partial a_{i+1}}{\partial z_i}
+\;:=\;
+\left( J_{a_{i+1}}(z_i) \right)^{T}
+=
+\begin{pmatrix}
+\displaystyle \frac{\partial\, \sigma_{i}(z_1^{(i)})}{\partial z_{1}^{i}} 
+    & \cdots 
+    & \displaystyle \frac{\partial\, \sigma_{i}(z_{n_{i+1}}^{(i)})}{\partial z_{1}^{(i)}}
+\\[1.2em]
+\vdots 
+    & \ddots 
+    & \vdots
+\\[1.2em]
+\displaystyle \frac{\partial\, \sigma_{i}(z_1^{(i)})}{\partial z_{n_{i+1}}^{(i)}}
+    & \cdots
+    & \displaystyle \frac{\partial\, \sigma_{i}(z_{n_{i+1}}^{(i)})}{\partial z_{n_{i+1}}^{(i)}}
+\end{pmatrix}
+=
+\operatorname{diag}\!\left( \sigma_i'(z_i) \right).
+$$
+
+
+Due to the (transposed) chain rule,
+
+$$
+\delta_{m-1}
+=
+\frac{\partial C}{\partial z_{m-1}}
+=
+\frac{\partial C}{\partial a_m}
+\frac{\partial a_m}{\partial z_{m-1}}
+=
+\operatorname{diag}\!\left( \sigma_{m-1}'(z_{m-1}) \right)(a_m - y)
+=
+\sigma_{m-1}'(z_{m-1}) \circ (a_m - y),
+$$
+
+where $\circ$ denotes the componentwise multiplication (Hadamard product).
+
+This proves equation (5).
+
+---
+
+To show (6) we first look at (1) where we have $z_{i+1} = W_{i+1} a_{i+1} + b_{i+1}$ for $i = 0,\dots,m-2$ and thus, we have
+
+$$
+\frac{\partial z_{i+1}}{\partial a_{i+1}}
+= \bigl(J_{z_{i+1}}(a_{i+1})\bigr)^{\top}
+=
+\begin{pmatrix}
+\displaystyle \frac{\partial z^{(i+1)}_1}{\partial \sigma^{(i+1)}(z_1^{(i+1)})}
+& \cdots &
+\displaystyle \frac{\partial z^{(i+1)}_1}{\partial \sigma^{(i+1)}(z_{n_{i+1}}^{(i+1)})}
+\\[1.1em]
+\vdots & \ddots & \vdots
+\\[1.1em]
+\displaystyle \frac{\partial z^{(i+1)}_{n_{i+1}}}{\partial \sigma_i(z_1^{(i+1)})}
+& \cdots &
+\displaystyle \frac{\partial z^{(i+1)}_{n_{i+1}}}{\partial \sigma_i(z^{(i+1)}_{n_{i+1}})}
+\end{pmatrix}
+=
+\begin{pmatrix}
+w^{(i+1)}_{11} & \cdots & w^{(i+1)}_{1\,n_{i+1}} \\
+\vdots & \ddots & \vdots \\
+w^{(i+1)}_{n_{i+1}1} & \cdots & w^{(i+1)}_{n_{i+1}\,n_{i+1}}
+\end{pmatrix}
+= W_{i+1}^{\top}.
+$$
+
+```{tex}
+
+```
+Using the (transposed) chain rule, we obtain
+$$
+\delta_i
+= \frac{\partial C}{\partial z_i}
+= \frac{\partial a_{i+1}}{\partial z_i}
+  \frac{\partial z_{i+1}}{\partial a_{i+1}}
+  \frac{\partial C}{\partial z_{i+1}}
+= \operatorname{diag}\!\bigl(\sigma_i'(z_i)\bigr)\, W_{i+1}^{\top} \delta_{i+1}.
+$$
+
+Finally, multiplication by the diagonal matrix
+$\operatorname{diag}(\sigma_i'(z_i))$ is the same as
+componentwise multiplication with the vector $\sigma_i'(z_i)$, so
+$$
+\delta_i
+= \sigma_i'(z_i) \circ \bigl(W_{i+1}^{\top} \delta_{i+1}\bigr),
+$$
+which is exactly equation (6).
+
+---
+
+To show (7) and determine how to update the bias we begin with the equations for the derivative of $C$ with respect to $b_i$ where we again follow by using the (transposed) chain rule, since $z_i = W_i a_i + b_i$ and
+
+$$
+\frac{\partial z_i}{\partial b_i}
+=
+\bigl(J_{z_i}(b_i)\bigr)^{\top}
+= I,
+\quad\text{i.e.,}\quad
+\frac{\partial C}{\partial b_i}
+=
+\frac{\partial z_i}{\partial b_i}
+\frac{\partial C}{\partial z_i}
+=
+I \delta_i
+=
+\delta_i.
+$$
+
+---
+
+Finally for (8), to compute the $\partial C / \partial W_i$, we drop the indices, i.e., we use
+$\delta = \partial C / \partial z$ and $z = W a + b$.
+The derivative of $z_i = e_i^{\top} z$ with respect to
+$w_{i,j} = e_i^{\top} W e_j$ is given by
+
+$$
+\frac{\partial z_i}{\partial w_{i,j}}
+=
+\frac{\partial \bigl(\sum_k w_{i,k} \sigma_k + b_i\bigr)}{\partial w_{i,j}}
+= \sigma_j = a^{\top} e_j,
+$$
+
+the other derivatives $\partial z_\ell / \partial w_{i,j}$, for $\ell \ne i$, are all zero.
+
+Therefore the derivative of $C$ with respect to $w_{i,j}$ and the “matrix derivative”
+$\partial C / \partial W$ are given by the one-dimensional chain rule as
+
+$$
+\frac{\partial C}{\partial w_{i,j}}
+=
+\frac{\partial C}{\partial z_i}
+\frac{\partial z_i}{\partial w_{i,j}}
+=
+\delta_i \sigma_j
+=
+e_i^{\top} \delta a^{\top} e_j
+\;\Rightarrow\;
+\frac{\partial C}{\partial W}
+= \delta a^{\top}.
+$$
+
+Substituting the missing layer index $i$ finishes the proof.

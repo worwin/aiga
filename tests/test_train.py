@@ -26,9 +26,14 @@ optimizer = SGD(lr=0.01)
 # Training loop
 for epoch in range(200):
     y_hat = net(x)
+
+    # 
     loss = loss_fn.forward(y_hat, y)
+
+    # compute ∂C/∂y_hat
     delta = loss_fn.backprop()
 
+    # send ∂C/∂y_hat  
     net.backprop(delta)
     net.update(optimizer)
 

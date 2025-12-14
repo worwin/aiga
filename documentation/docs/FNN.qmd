@@ -1,0 +1,30 @@
+
+Import the libraries needed for this exercise. 
+
+```{python}
+import numpy as np
+from aiga.layers.dense import Dense
+from aiga.activations import ReLU
+from aiga.networks.sequential import Sequential
+from aiga.losses.mse import MSE
+from aiga.optimizers import SGD
+```
+
+Here we can create a Linear regression data set with a bit of noise; mathematically noted as:
+
+$$y = 2x + \varepsilon,\quad \varepsilon \sim \mathcal{N}(0,\sigma^2)$$
+
+```{python}
+x = np.random.randn(200, 1)
+y = 2 * x + 0.2 * np.random.randn(200,1)
+```
+
+Define the network based on the aiga Network-centric architecture: this means the network controls exeuction (forward, backprop, update, etc) all live inside the Sequential.py file inside the Networks folder. 
+
+```{python}
+net = Sequential(
+    Dense(8, input_size=1),
+    ReLU(),
+    Dense(1)
+)
+```
