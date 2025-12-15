@@ -28,3 +28,27 @@ net = Sequential(
     Dense(1)
 )
 ```
+
+```{python}
+loss_fn = MSE()
+optimizer = SGD(lr=0.01)
+```
+
+
+The training loop
+
+```{python}
+for epoch in range(200):
+    y_hat = net(x)
+
+    loss = loss_fn.forward(y_hat, y)
+
+    delta = loss_fn.backprop()
+
+    net.backprop(delta)
+    net.update(optimizer)
+
+    if epoch % 20 == 0:
+        print(f"Epoch {epoch}, Loss: {loss:.6f}")
+
+```

@@ -112,7 +112,7 @@ window.Quarto = {
 
 
 <p>Import the libraries needed for this exercise.</p>
-<div id="893db788" class="cell" data-execution_count="1">
+<div id="5301f484" class="cell" data-execution_count="1">
 <div class="sourceCode cell-code" id="cb1"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb1-1"><a href="#cb1-1" aria-hidden="true" tabindex="-1"></a><span class="im">import</span> numpy <span class="im">as</span> np</span>
 <span id="cb1-2"><a href="#cb1-2" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aiga.layers.dense <span class="im">import</span> Dense</span>
 <span id="cb1-3"><a href="#cb1-3" aria-hidden="true" tabindex="-1"></a><span class="im">from</span> aiga.activations <span class="im">import</span> ReLU</span>
@@ -122,17 +122,48 @@ window.Quarto = {
 </div>
 <p>Here we can create a Linear regression data set with a bit of noise; mathematically noted as:</p>
 <p><span class="math display">\[y = 2x + \varepsilon,\quad \varepsilon \sim \mathcal{N}(0,\sigma^2)\]</span></p>
-<div id="9cf46434" class="cell" data-execution_count="2">
+<div id="6e6ea732" class="cell" data-execution_count="2">
 <div class="sourceCode cell-code" id="cb2"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb2-1"><a href="#cb2-1" aria-hidden="true" tabindex="-1"></a>x <span class="op">=</span> np.random.randn(<span class="dv">200</span>, <span class="dv">1</span>)</span>
 <span id="cb2-2"><a href="#cb2-2" aria-hidden="true" tabindex="-1"></a>y <span class="op">=</span> <span class="dv">2</span> <span class="op">*</span> x <span class="op">+</span> <span class="fl">0.2</span> <span class="op">*</span> np.random.randn(<span class="dv">200</span>,<span class="dv">1</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
 </div>
 <p>Define the network based on the aiga Network-centric architecture: this means the network controls exeuction (forward, backprop, update, etc) all live inside the Sequential.py file inside the Networks folder.</p>
-<div id="9c658e33" class="cell" data-execution_count="3">
+<div id="e147675f" class="cell" data-execution_count="3">
 <div class="sourceCode cell-code" id="cb3"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb3-1"><a href="#cb3-1" aria-hidden="true" tabindex="-1"></a>net <span class="op">=</span> Sequential(</span>
 <span id="cb3-2"><a href="#cb3-2" aria-hidden="true" tabindex="-1"></a>    Dense(<span class="dv">8</span>, input_size<span class="op">=</span><span class="dv">1</span>),</span>
 <span id="cb3-3"><a href="#cb3-3" aria-hidden="true" tabindex="-1"></a>    ReLU(),</span>
 <span id="cb3-4"><a href="#cb3-4" aria-hidden="true" tabindex="-1"></a>    Dense(<span class="dv">1</span>)</span>
 <span id="cb3-5"><a href="#cb3-5" aria-hidden="true" tabindex="-1"></a>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<div id="9d351fdd" class="cell" data-execution_count="4">
+<div class="sourceCode cell-code" id="cb4"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb4-1"><a href="#cb4-1" aria-hidden="true" tabindex="-1"></a>loss_fn <span class="op">=</span> MSE()</span>
+<span id="cb4-2"><a href="#cb4-2" aria-hidden="true" tabindex="-1"></a>optimizer <span class="op">=</span> SGD(lr<span class="op">=</span><span class="fl">0.01</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+</div>
+<p>The training loop</p>
+<div id="e1ca34b7" class="cell" data-execution_count="5">
+<div class="sourceCode cell-code" id="cb5"><pre class="sourceCode python code-with-copy"><code class="sourceCode python"><span id="cb5-1"><a href="#cb5-1" aria-hidden="true" tabindex="-1"></a><span class="cf">for</span> epoch <span class="kw">in</span> <span class="bu">range</span>(<span class="dv">200</span>):</span>
+<span id="cb5-2"><a href="#cb5-2" aria-hidden="true" tabindex="-1"></a>    y_hat <span class="op">=</span> net(x)</span>
+<span id="cb5-3"><a href="#cb5-3" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-4"><a href="#cb5-4" aria-hidden="true" tabindex="-1"></a>    loss <span class="op">=</span> loss_fn.forward(y_hat, y)</span>
+<span id="cb5-5"><a href="#cb5-5" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-6"><a href="#cb5-6" aria-hidden="true" tabindex="-1"></a>    delta <span class="op">=</span> loss_fn.backprop()</span>
+<span id="cb5-7"><a href="#cb5-7" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-8"><a href="#cb5-8" aria-hidden="true" tabindex="-1"></a>    net.backprop(delta)</span>
+<span id="cb5-9"><a href="#cb5-9" aria-hidden="true" tabindex="-1"></a>    net.update(optimizer)</span>
+<span id="cb5-10"><a href="#cb5-10" aria-hidden="true" tabindex="-1"></a></span>
+<span id="cb5-11"><a href="#cb5-11" aria-hidden="true" tabindex="-1"></a>    <span class="cf">if</span> epoch <span class="op">%</span> <span class="dv">20</span> <span class="op">==</span> <span class="dv">0</span>:</span>
+<span id="cb5-12"><a href="#cb5-12" aria-hidden="true" tabindex="-1"></a>        <span class="bu">print</span>(<span class="ss">f"Epoch </span><span class="sc">{</span>epoch<span class="sc">}</span><span class="ss">, Loss: </span><span class="sc">{</span>loss<span class="sc">:.6f}</span><span class="ss">"</span>)</span></code><button title="Copy to Clipboard" class="code-copy-button"><i class="bi"></i></button></pre></div>
+<div class="cell-output cell-output-stdout">
+<pre><code>Epoch 0, Loss: 3.802574
+Epoch 20, Loss: 3.789031
+Epoch 40, Loss: 3.781388
+Epoch 60, Loss: 3.773147
+Epoch 80, Loss: 3.757124
+Epoch 100, Loss: 3.718737
+Epoch 120, Loss: 3.623985
+Epoch 140, Loss: 3.397573
+Epoch 160, Loss: 2.906451
+Epoch 180, Loss: 2.048427</code></pre>
+</div>
 </div>
 
 </main>
