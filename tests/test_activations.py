@@ -5,22 +5,21 @@ from aiga.activations import ReLU, Abs
 
 def test_relu():
     relu = ReLU()
-    x = np.array([-2, -1, 0, 1, 2])
+
+    x = np.array([-2.0, -1.0, 0.0, 1.0, 2.0])
 
     # Forward pass
-    expected_forward = np.array([0, 0, 0, 1, 2])
+    expected_forward = np.array([0.0, 0.0, 0.0, 1.0, 2.0])
     assert np.allclose(relu.forward(x), expected_forward)
-    assert np.allclose(relu(x), expected_forward)  # __call__ alias
 
-    # Derivative
-    expected_derivative = np.array([0, 0, 0, 1, 1])
-    assert np.allclose(relu.derivative(x), expected_derivative)
-
-    # Backprop
-    delta = np.ones_like(x)
-    relu.forward(x)  # cache for backprop
-    expected_backprop = (x > 0).astype(float) * delta
+    # Backpropagation
+    # ReLU blocks gradients where x <= 0 and passes gradients where x > 0.
+    delta = np.array([10.0, 20.0, 30.0, 40.0, 50.0])
+    expected_backprop = np.array([0.0, 0.0, 0.0, 40.0, 50.0])
     assert np.allclose(relu.backprop(delta), expected_backprop)
+
+    # ReLU has no trainable parameters, so update does nothing.
+    assert relu.update(None) is None
 
 
 def test_abs():

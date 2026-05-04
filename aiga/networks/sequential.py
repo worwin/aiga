@@ -25,4 +25,5 @@ class Sequential:
     def update(self, optim):
         # Update all trainable layers
         for layer in self.layers:
-            layer.update(optim)
+            if layer.trainable:
+                layer.update(optim)

@@ -6,6 +6,9 @@ from .layer import Layer
 
 
 class Dense(Layer):
+    
+    trainable = True
+
     def __init__(self, output_size, input_size=None):
         super().__init__()              # executes constructor of the parent Layer class
         self.output_size = output_size  # the number of output neurons        
