@@ -98,6 +98,8 @@ This mirrors Higham's notation, but uses subscripts instead of superscripts.
 :::
 
 
+
+
 ## 2 Cost Function
 
 #### Higham & Higham (2018)
