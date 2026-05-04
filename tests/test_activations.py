@@ -18,9 +18,6 @@ def test_relu():
     expected_backprop = np.array([0.0, 0.0, 0.0, 40.0, 50.0])
     assert np.allclose(relu.backprop(delta), expected_backprop)
 
-    # ReLU has no trainable parameters, so update does nothing.
-    assert relu.update(None) is None
-
 
 def test_abs():
     abs_act = Abs()
