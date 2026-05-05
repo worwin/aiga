@@ -4,3 +4,4 @@ __version__ = "0.1"
 __author__ = "Joshua W. Windle"
 
 from .dense import Dense
+from .federated_dense import FederatedDense
