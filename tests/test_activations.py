@@ -12,6 +12,9 @@ def test_relu():
     expected_forward = np.array([0.0, 0.0, 0.0, 1.0, 2.0])
     assert np.allclose(relu.forward(x), expected_forward)
 
+    # __call__ alias should behave exactly like forward()
+    assert np.allclose(relu(x), expected_forward)
+
     # Backpropagation
     # ReLU blocks gradients where x <= 0 and passes gradients where x > 0.
     delta = np.array([10.0, 20.0, 30.0, 40.0, 50.0])

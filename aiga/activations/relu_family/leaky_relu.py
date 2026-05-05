@@ -2,30 +2,39 @@ import numpy as np
 from aiga.layers.layer import Layer
 
 
-class ReLU(Layer):
-    """
-    Rectified Linear Unit activation function.
+class LeakyReLU(Layer):
+    """Leaky Rectified Linear Unit activation function.
 
-    ReLU keeps positive inputs unchanged and maps non-positive inputs
-    to zero. It is one of the most common activation functions used in
-    neural networks.
+    Leaky ReLU is a modified version of ReLU that allows a small,
+    non-zero slope for inputs less than or equal to zero. This helps
+    prevent neurons from becoming inactive during training.
 
     Formula:
-        f(x) = 0, if x <= 0
-        f(x) = x, if x > 0
+        f(x) = alpha * x, if x <= 0
+        f(x) = x,         if x > 0
 
     Derivative:
-        f'(x) = 0, if x <= 0
-        f'(x) = 1, if x > 0
+        f'(x) = alpha, if x <= 0
+        f'(x) = 1,     if x > 0
+
+    Args:
+        alpha: Slope applied to inputs less than or equal to zero.
+            Defaults to 0.01.
 
     Attributes:
         x: Cached input from the most recent forward pass.
+        alpha: Negative-side slope parameter.
     """
 
-    def __init__(self):
-        """Initialize the ReLU activation function."""
+    def __init__(self, alpha=0.01):
+        """Initialize the Leaky ReLU activation function.
+
+        Args:
+            alpha: Slope applied to inputs less than or equal to zero.
+        """
         super().__init__()
         self.x = None
+        self.alpha = alpha
 
     def __call__(self, x: np.ndarray) -> np.ndarray:
         """Alias for the forward pass.
@@ -48,7 +57,7 @@ class ReLU(Layer):
             Activated output.
         """
         self.x = x
-        return np.maximum(0, x)
+        return np.where(x <= 0, self.alpha * x, x)
 
     def derivative(self) -> np.ndarray:
         """Compute the local derivative.
@@ -62,7 +71,7 @@ class ReLU(Layer):
         if self.x is None:
             raise ValueError("Forward must be called before derivative.")
 
-        derivative = (self.x > 0).astype(float)
+        derivative = np.where(self.x <= 0, self.alpha, 1.0)
         return derivative
 
     def backprop(self, delta: np.ndarray) -> np.ndarray:
