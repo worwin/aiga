@@ -89,40 +89,58 @@ def run_sgd_example(
     return history
 
 
-def plot_sgd_path(function, history, known_minimum_x=0.0):
+def plot_full_function(function, known_minimum_x=0.0, x_left=-3.0, x_right=3.0):
+    """Plot the full function being minimized.
+
+    Args:
+        function: Function being minimized.
+        known_minimum_x: Known minimizer used for display.
+        x_left: Left edge of the plotted domain.
+        x_right: Right edge of the plotted domain.
+    """
+    x_grid = np.linspace(x_left, x_right, 1000)
+    y_grid = function(x_grid)
+    minimum_y = function(np.array([known_minimum_x]))[0]
+
+    plt.figure()
+    plt.plot(x_grid, y_grid, label="Function: y = f(x)")
+    plt.scatter([known_minimum_x], [minimum_y], marker="x", s=100, label="Known minimum")
+    plt.xlabel("x")
+    plt.ylabel("y")
+    plt.title("Full function being minimized")
+    plt.legend()
+    plt.grid(True)
+
+
+def plot_sgd_path(function, history, known_minimum_x=0.0, x_left=-3.0, x_right=3.0):
     """Plot the function and the SGD path.
 
     Args:
         function: Function being minimized.
         history: Recorded SGD path.
         known_minimum_x: Known minimizer used for display.
+        x_left: Left edge of the plotted domain.
+        x_right: Right edge of the plotted domain.
     """
     x_path = np.array(history["x"])
     y_path = np.array(history["y"])
 
-    x_min = min(np.min(x_path), known_minimum_x) - 0.5
-    x_max = max(np.max(x_path), known_minimum_x) + 0.5
-
-    x_grid = np.linspace(x_min, x_max, 500)
+    x_grid = np.linspace(x_left, x_right, 1000)
     y_grid = function(x_grid)
+    minimum_y = function(np.array([known_minimum_x]))[0]
 
     plt.figure()
-    plt.plot(x_grid, y_grid, label="Function")
+    plt.plot(x_grid, y_grid, label="Function: y = f(x)")
     plt.scatter(x_path, y_path, label="SGD steps")
     plt.plot(x_path, y_path, linestyle="--", label="SGD path")
-    plt.scatter(
-        [known_minimum_x],
-        [function(np.array([known_minimum_x]))[0]],
-        marker="x",
-        s=100,
-        label="Known minimum",
-    )
+    plt.scatter([x_path[0]], [y_path[0]], marker="o", s=100, label="Start")
+    plt.scatter([x_path[-1]], [y_path[-1]], marker="s", s=100, label="Final step")
+    plt.scatter([known_minimum_x], [minimum_y], marker="x", s=100, label="Known minimum")
     plt.xlabel("x")
     plt.ylabel("y")
-    plt.title("SGD path on y = x^4")
+    plt.title("SGD path on the original function")
     plt.legend()
     plt.grid(True)
-    plt.show()
 
 
 def main():
@@ -135,6 +153,10 @@ def main():
     steps = 50
     initial_x = 2.0
 
+    # This controls how much of the original function is shown.
+    x_left = -3.0
+    x_right = 3.0
+
     # Try this simpler bowl-shaped function later.
     # function = quadratic
     # gradient = quadratic_gradient
@@ -142,6 +164,8 @@ def main():
     # steps = 25
     # initial_x = 5.0
     # known_minimum_x = 0.0
+    # x_left = -6.0
+    # x_right = 6.0
 
     history = run_sgd_example(
         function=function,
@@ -152,7 +176,22 @@ def main():
         known_minimum_x=known_minimum_x,
     )
 
-    plot_sgd_path(function, history, known_minimum_x=known_minimum_x)
+    plot_full_function(
+        function=function,
+        known_minimum_x=known_minimum_x,
+        x_left=x_left,
+        x_right=x_right,
+    )
+
+    plot_sgd_path(
+        function=function,
+        history=history,
+        known_minimum_x=known_minimum_x,
+        x_left=x_left,
+        x_right=x_right,
+    )
+
+    plt.show()
 
 
 if __name__ == "__main__":
