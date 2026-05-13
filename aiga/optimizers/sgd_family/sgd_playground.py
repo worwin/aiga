@@ -1,64 +1,87 @@
 import numpy as np
 
 
-def constant_gradient(step):
-    """Return a constant gradient."""
-    return 5.0
+# Choose one objective function and its derivative.
+# The optimizer will move x in the direction that lowers y = f(x).
+
+def quadratic(x):
+    """Compute y = x^2."""
+    return x ** 2
 
 
-def decreasing_gradient(step):
-    """Return a gradually decreasing gradient."""
-    return max(5.0 - 0.25 * step, 0.0)
+def quadratic_gradient(x):
+    """Compute dy/dx for y = x^2."""
+    return 2 * x
 
 
-def alternating_gradient(step):
-    """Return a gradient that changes direction."""
-    return 5.0 if step < 10 else -5.0
+def cubic(x):
+    """Compute y = x^3."""
+    return x ** 3
 
 
-def run_sgd_demo(gradient_fn, lr=0.1, steps=20, initial_parameter=10.0):
-    """Run a simple SGD simulation.
+def cubic_gradient(x):
+    """Compute dy/dx for y = x^3."""
+    return 3 * (x ** 2)
+
+
+def run_sgd_playground(
+    function,
+    gradient,
+    learning_rate=0.1,
+    steps=20,
+    initial_x=5.0,
+):
+    """Run SGD on a simple one-variable function.
 
     Args:
-        gradient_fn: Function returning the gradient for each step.
-        lr: Learning rate.
-        steps: Number of update steps.
-        initial_parameter: Starting parameter value.
+        function: Function to minimize.
+        gradient: Derivative of the function.
+        learning_rate: Step-size multiplier.
+        steps: Number of SGD steps.
+        initial_x: Starting x-coordinate.
     """
-    p = initial_parameter
+    x = initial_x
 
-    print("Plain SGD playground")
-    print("Formula: p = p - lr * gradient")
+    print("SGD playground")
+    print("Formula: x = x - learning_rate * gradient")
     print()
 
-    for step in range(steps):
-        g = gradient_fn(step)
-        update = lr * g
-        p -= update
+    for step in range(steps + 1):
+        y = function(x)
+        grad = gradient(x)
+        update = learning_rate * grad
 
         print(
             f"Step {step:02d} | "
-            f"gradient={g:8.4f} | "
-            f"update={update:8.4f} | "
-            f"parameter={p:8.4f}"
+            f"x={x:10.5f} | "
+            f"y={y:10.5f} | "
+            f"gradient={grad:10.5f} | "
+            f"update={update:10.5f}"
         )
+
+        x = x - update
 
 
 def main():
     """Run the SGD playground."""
-    lr = 0.1
+    learning_rate = 0.1
     steps = 20
-    initial_parameter = 10.0
+    initial_x = 5.0
 
-    gradient_fn = constant_gradient
-    # gradient_fn = decreasing_gradient
-    # gradient_fn = alternating_gradient
+    function = quadratic
+    gradient = quadratic_gradient
 
-    run_sgd_demo(
-        gradient_fn=gradient_fn,
-        lr=lr,
+    # Try this later, but use a smaller learning rate.
+    # function = cubic
+    # gradient = cubic_gradient
+    # learning_rate = 0.001
+
+    run_sgd_playground(
+        function=function,
+        gradient=gradient,
+        learning_rate=learning_rate,
         steps=steps,
-        initial_parameter=initial_parameter,
+        initial_x=initial_x,
     )
 
 
