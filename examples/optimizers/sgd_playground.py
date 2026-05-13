@@ -89,31 +89,8 @@ def run_sgd_example(
     return history
 
 
-def plot_full_function(function, known_minimum_x=0.0, x_left=-3.0, x_right=3.0):
-    """Plot the full function being minimized.
-
-    Args:
-        function: Function being minimized.
-        known_minimum_x: Known minimizer used for display.
-        x_left: Left edge of the plotted domain.
-        x_right: Right edge of the plotted domain.
-    """
-    x_grid = np.linspace(x_left, x_right, 1000)
-    y_grid = function(x_grid)
-    minimum_y = function(np.array([known_minimum_x]))[0]
-
-    plt.figure()
-    plt.plot(x_grid, y_grid, label="Function: y = f(x)")
-    plt.scatter([known_minimum_x], [minimum_y], marker="x", s=100, label="Known minimum")
-    plt.xlabel("x")
-    plt.ylabel("y")
-    plt.title("Full function being minimized")
-    plt.legend()
-    plt.grid(True)
-
-
-def plot_sgd_path(function, history, known_minimum_x=0.0, x_left=-3.0, x_right=3.0):
-    """Plot the function and the SGD path.
+def plot_sgd_on_function(function, history, known_minimum_x=0.0, x_left=-3.0, x_right=3.0):
+    """Plot the original function and the SGD path in one figure.
 
     Args:
         function: Function being minimized.
@@ -130,7 +107,7 @@ def plot_sgd_path(function, history, known_minimum_x=0.0, x_left=-3.0, x_right=3
     minimum_y = function(np.array([known_minimum_x]))[0]
 
     plt.figure()
-    plt.plot(x_grid, y_grid, label="Function: y = f(x)")
+    plt.plot(x_grid, y_grid, label="Original function: y = f(x)")
     plt.scatter(x_path, y_path, label="SGD steps")
     plt.plot(x_path, y_path, linestyle="--", label="SGD path")
     plt.scatter([x_path[0]], [y_path[0]], marker="o", s=100, label="Start")
@@ -138,9 +115,10 @@ def plot_sgd_path(function, history, known_minimum_x=0.0, x_left=-3.0, x_right=3
     plt.scatter([known_minimum_x], [minimum_y], marker="x", s=100, label="Known minimum")
     plt.xlabel("x")
     plt.ylabel("y")
-    plt.title("SGD path on the original function")
+    plt.title("SGD path over the original function")
     plt.legend()
     plt.grid(True)
+    plt.show()
 
 
 def main():
@@ -176,22 +154,13 @@ def main():
         known_minimum_x=known_minimum_x,
     )
 
-    plot_full_function(
-        function=function,
-        known_minimum_x=known_minimum_x,
-        x_left=x_left,
-        x_right=x_right,
-    )
-
-    plot_sgd_path(
+    plot_sgd_on_function(
         function=function,
         history=history,
         known_minimum_x=known_minimum_x,
         x_left=x_left,
         x_right=x_right,
     )
-
-    plt.show()
 
 
 if __name__ == "__main__":
