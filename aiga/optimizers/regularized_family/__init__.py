@@ -1,9 +1,12 @@
-"""Regularized optimizer family.
+"""Regularization helpers.
 
-This package is reserved for optimizer variants that include explicit
-regularization behavior, such as weight decay or Tikhonov/L2 penalties.
+This package contains regularization terms that can be added to a loss
+or used to modify gradients during optimization.
 
-Planned topics:
-    Weight decay: Penalizes large parameter values during optimization.
-    Tikhonov regularization: Adds an L2-style penalty to the objective.
+Regularizers:
+    L2Regularization: Penalizes squared parameter magnitude.
+    TikhonovRegularization: L2/Tikhonov penalty in the identity-matrix case.
 """
+
+from .l2_regularization import L2Regularization
+from .tikhonov_regularization import TikhonovRegularization
