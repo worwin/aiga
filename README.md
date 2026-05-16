@@ -19,6 +19,14 @@ Regularization utilities:
 - `TikhonovRegularization`
 - `apply_regularization_grads`
 
+`L2Regularization` is classic objective-penalty regularization:
+
+- Penalty: `lambda * sum(W^2)`
+- Gradient contribution: `2 * lambda * W`
+
+`AdamW` is different from L2 penalty regularization because AdamW applies
+decoupled weight decay in the optimizer step.
+
 Recommended explicit usage pattern (no automatic global regularization):
 
 ```python
