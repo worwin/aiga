@@ -13,6 +13,26 @@ Adaptive optimizers currently available:
 - Adam
 - AdamW (Adam with decoupled weight decay)
 
+Regularization utilities:
+
+- `L2Regularization`
+- `TikhonovRegularization`
+- `apply_regularization_grads`
+
+Recommended explicit usage pattern (no automatic global regularization):
+
+```python
+from aiga.optimizers import SGD, L2Regularization, apply_regularization_grads
+
+optimizer = SGD(lr=0.01)
+regularizer = L2Regularization(lambda_=0.01)
+
+params = [layer.W, layer.b]
+grads = [layer.dW, layer.db]
+grads = apply_regularization_grads(grads, params, regularizer=regularizer)
+optimizer.update(params, grads)
+```
+
 ## Layers
 
 - `Dropout` is available as a regularization layer.

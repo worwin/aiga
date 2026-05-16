@@ -6,7 +6,9 @@ or used to modify gradients during optimization.
 Regularizers:
     L2Regularization: Penalizes squared parameter magnitude.
     TikhonovRegularization: L2/Tikhonov penalty in the identity-matrix case.
+    apply_regularization_grads: Adds regularizer gradients to base gradients.
 """
 
 from .l2_regularization import L2Regularization
 from .tikhonov_regularization import TikhonovRegularization
+from .gradient_utils import apply_regularization_grads
