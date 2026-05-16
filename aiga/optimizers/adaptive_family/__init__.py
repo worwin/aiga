@@ -7,8 +7,10 @@ Optimizers:
     AdaGrad: Accumulates squared gradients.
     RMSProp: Uses a moving average of squared gradients.
     Adam: Combines momentum with adaptive squared-gradient scaling.
+    AdamW: Adam with decoupled weight decay.
 """
 
 from .adagrad import AdaGrad
 from .rmsprop import RMSProp
 from .adam import Adam
+from .adamw import AdamW

@@ -4,6 +4,21 @@ I'm writing a project from scratch to experiment with machine learning. I want t
 
 Project to code several machine learning and neural network models from scratch. 
 
+## Optimizers
+
+Adaptive optimizers currently available:
+
+- AdaGrad
+- RMSProp
+- Adam
+- AdamW (Adam with decoupled weight decay)
+
+## Layers
+
+- `Dropout` is available as a regularization layer.
+- Dropout is active only during training and is disabled during inference/evaluation.
+- It uses inverted dropout scaling (`x * mask / (1 - p)`) during training.
+- In feedforward stacks, it is typically placed after activation layers.
 
 # Sequential Networks
 

@@ -5,3 +5,4 @@ __author__ = "Joshua W. Windle"
 
 from .dense import Dense
 from .federated_dense import FederatedDense
+from .dropout import Dropout
